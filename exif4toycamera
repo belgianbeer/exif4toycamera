@@ -1,0 +1,81 @@
+#!/bin/sh
+
+__usage () {
+	echo "Usage: ${0##*/} [-fm] jpeg [jpeg ...]" 1>&2 
+	exit 1
+}
+
+__add_time_by_name () {
+	local _n
+
+	_n=$(echo "${1}" | sed -e 's/img_\([0-9][0-9][0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\)_\([0-9][0-9]\)\([0-9][0-9]\)\([0-9][0-9]\).*/\1:\2:\3 \4:\5:\6/')
+	exiftool \
+		-quiet -preserve -overwrite_original \
+		-DateTimeOriginal="${_n}" \
+		-OffsetTimeOriginal="${offset}" \
+		"${1}"
+}
+
+__add_time_by_mtime () {
+	exiftool \
+		-quiet -preserve -overwrite_original \
+		-DateTimeOriginal'<FileModifyDate' \
+		-OffsetTimeOriginal="${offset}" \
+		"$@"
+}
+
+__3coins_add_time_by_mtime () {
+	exiftool \
+		-quiet -preserve -overwrite_original \
+		-DateTimeOriginal'<FileModifyDate' \
+		-OffsetTimeOriginal="${offset}" \
+		-Make=3COINS \
+		-Model='MINI TOY CAMERA 2513/KRTC' \
+		"${orientation}" \
+		"$@"
+}
+
+program=${0##*/}
+
+offset="+09:00"
+orientation="-Orientation=Horizontal"
+
+while getopts 'lrfhmz:' cmd_arg; do
+	case "${cmd_arg}" in
+	l)	orientation="-Orientation=Rotate 270 CW" ;;
+	r)	orientation="-Orientation=Rotate 90 CW" ;;
+	f)	force=YES ;;
+	m)	mtime=YES ;;
+	z)	offset="$OPTARG" ;;
+	*)	__usage ;;
+	esac
+done
+shift $((OPTIND - 1))
+
+case ${program} in
+3coins*)	__3coins_add_time_by_mtime "$@"; exit ;;
+esac
+
+if [ x${mtime} = x"YES" ]; then
+	__add_time_by_mtime "$@"
+	exit
+fi
+
+for f
+do
+	tt=$(exiftool -S -DateTimeOriginal "${f}" | tr -d ' ')
+	if [ x"${tt}" = x \
+	    -o x"${tt}" = x'DateTimeOriginal:::::' \
+	    -o x${force} = x"YES" ]
+	then
+		case $f in 
+
+		img_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].jpg|img_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].jpeg)
+			__add_time_by_name "${f}"
+			;;
+		*)
+			__add_time_by_mtime "${f}"
+			;;
+		esac
+	fi
+done
