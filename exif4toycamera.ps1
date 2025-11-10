@@ -59,9 +59,13 @@ if ($files.Count -eq 0) {
 
 # exiftool 実行
 exiftool -quiet -preserve -overwrite_original `
-    -DateTimeOriginal'<FileModifyDate' `
-    -OffsetTimeOriginal="$offset" `
-    -Make=3COINS `
-    -Model='MINI TOY CAMERA 2513/KRTC' `
-    -Orientation="$orientation" `
-    $files
+	-AllDates'<FileModifyDate' `
+	-OffsetTime="$offset" `
+	-OffsetTimeOriginal="$offset" `
+	-OffsetTimeDigitized="$offset" `
+	-Make=3COINS `
+	-Model='MINI TOY CAMERA 2513/KRTC' `
+	-FocalLength='2.2mm'  `
+	-FNumber='2.8' `
+	-Orientation="$orientation" `
+	$files

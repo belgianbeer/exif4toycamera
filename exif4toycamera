@@ -26,7 +26,7 @@
 #  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #  SUCH DAMAGE.
 #
-#  $Id: exif4toycamera,v 1.1 2025/11/09 22:28:11 minmin Exp $
+#  $Id: exif4toycamera,v 1.2 2025/11/10 11:21:55 minmin Exp $
 
 offset="+09:00"
 orientation="-Orientation=Horizontal"
@@ -51,9 +51,13 @@ if [ $# -eq 0 ]; then
 fi
 
 exiftool -quiet -preserve -overwrite_original \
-	-DateTimeOriginal'<'FileModifyDate' \
+	-AllDates'<FileModifyDate' \
+	-OffsetTime="${offset}" \
 	-OffsetTimeOriginal="${offset}" \
+	-OffsetTimeDigitized="${offset}" \
 	-Make=3COINS \
 	-Model='MINI TOY CAMERA 2513/KRTC' \
+	-FocalLength='2.2mm' \
+	-FNumber='2.8' \
 	"${orientation}" \
 	"$@"
