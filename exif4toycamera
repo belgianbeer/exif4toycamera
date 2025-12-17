@@ -26,13 +26,13 @@
 #  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 #  SUCH DAMAGE.
 #
-#  $Id: exif4toycamera,v 1.3 2025/11/16 08:58:10 minmin Exp $
+#  $Id: exif4toycamera,v 1.4 2025/12/09 03:44:44 minmin Exp $
 
 offset="+09:00"
 orientation="Horizontal"
 
 __usage() {
-	echo "Usage: ${0##*/} [-lrz:] jpeg [jpeg ...]" >&2
+	echo "Usage: ${0##*/} [-lr] [-z TZoffset] file [file ...]" >&2
 	exit 1
 }
 
